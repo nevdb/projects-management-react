@@ -4,30 +4,52 @@ import CreateProjectForm from "./components/CreateProjectForm.jsx";
 import NewProject from "./components/NewProject.jsx";
 
 import "./App.css";
+import NoProjectSelected from "./components/NoProjectSelected.jsx";
 
 function App() {
-  const [projects, setProjects] = useState([]);
+  const [projectsState, setProjectsState] = useState({
+    selectedProjectId: undefined,
+    projects: [],
+  });
 
-  function handleChange(project) {
-    const newProject = {
-      id: crypto.randomUUID,
-      title: project.title,
-      description: project.description,
-    };
-    setProjects((prev) => [...prev, newProject]);
-    console.log(projects);
+  // const [projects, setProjects] = useState([]);
+
+  function handleAddProject() {
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        selectedProjectId: null,
+      };
+    });
+  }
+
+  // function handleChange(project) {
+  //   const newProject = {
+  //     id: crypto.randomUUID,
+  //     title: project.title,
+  //     description: project.description,
+  //   };
+  //   setProjects((prev) => [...prev, newProject]);
+  //   console.log(projects);
+  // }
+
+  let content;
+
+  if (projectsState.selectedProjectId === null) {
+    content = <NewProject />;
+  } else if (projectsState.selectedProjectId === undefined) {
+    content = <NoProjectSelected handleAddProject={handleAddProject} />;
   }
 
   return (
     <>
       <div className="flex my-8 h-screen ">
-        <Sidebar projects={projects} />
+        <Sidebar handleAddProject={handleAddProject} />
 
         <main className="flex-1 p-8 ">
-          <h1 className="text-3xl font-bold mb-4">Page Content</h1>
-          <p className="text-gray-300">This is the main page area.</p>
+          <h1 className="text-3xl font-bold">Page Content</h1>
 
-          <NewProject />
+          {content}
         </main>
       </div>
     </>
