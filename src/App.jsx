@@ -23,20 +23,28 @@ function App() {
     });
   }
 
-  // function handleChange(project) {
-  //   const newProject = {
-  //     id: crypto.randomUUID,
-  //     title: project.title,
-  //     description: project.description,
-  //   };
-  //   setProjects((prev) => [...prev, newProject]);
-  //   console.log(projects);
-  // }
+  function handleSaveAddProject(projectData) {
+    setProjectsState((prevState) => {
+      const projectId = Math.random();
+      const newProject = {
+        ...projectData,
+        id: projectId,
+      };
+
+      return {
+        ...prevState,
+        selectedProjectId: undefined,
+        projects: [...prevState.projects, newProject],
+      };
+    });
+  }
+
+  console.log(projectsState);
 
   let content;
 
   if (projectsState.selectedProjectId === null) {
-    content = <NewProject />;
+    content = <NewProject onAdd={handleSaveAddProject} />;
   } else if (projectsState.selectedProjectId === undefined) {
     content = <NoProjectSelected handleAddProject={handleAddProject} />;
   }
@@ -44,9 +52,12 @@ function App() {
   return (
     <>
       <div className="flex my-8 h-screen ">
-        <Sidebar handleAddProject={handleAddProject} />
+        <Sidebar
+          handleAddProject={handleAddProject}
+          projects={projectsState.projects}
+        />
 
-        <main className="flex-1 p-8 ">
+        <main className="flex-1 p-8 md:ml-64">
           <h1 className="text-3xl font-bold">Page Content</h1>
 
           {content}
