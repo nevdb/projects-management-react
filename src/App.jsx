@@ -1,8 +1,8 @@
 import { useState } from "react";
-import Sidebar from "./components/Sidebar.jsx";
 import CreateProjectForm from "./components/CreateProjectForm.jsx";
 import NewProject from "./components/NewProject.jsx";
-
+import Sidebar from "./components/Sidebar.jsx";
+import SelectedProject from "./components/SelectedProject.jsx";
 import "./App.css";
 import NoProjectSelected from "./components/NoProjectSelected.jsx";
 
@@ -13,6 +13,24 @@ function App() {
   });
 
   // const [projects, setProjects] = useState([]);
+
+  function handleSelectProject(id) {
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        selectedProjectId: id,
+      };
+    });
+  }
+
+  function handleCancelAddProject() {
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        selectedProjectId: undefined,
+      };
+    });
+  }
 
   function handleAddProject() {
     setProjectsState((prevState) => {
@@ -39,12 +57,19 @@ function App() {
     });
   }
 
-  console.log(projectsState);
+  const selectedProject = projectsState.projects.find(
+    (project) => project.id === projectsState.selectedProjectId
+  );
 
-  let content;
+  let content = <SelectedProject project={selectedProject} />;
 
   if (projectsState.selectedProjectId === null) {
-    content = <NewProject onAdd={handleSaveAddProject} />;
+    content = (
+      <NewProject
+        onAdd={handleSaveAddProject}
+        onCancel={handleCancelAddProject}
+      />
+    );
   } else if (projectsState.selectedProjectId === undefined) {
     content = <NoProjectSelected handleAddProject={handleAddProject} />;
   }
@@ -55,6 +80,7 @@ function App() {
         <Sidebar
           handleAddProject={handleAddProject}
           projects={projectsState.projects}
+          onSelectProject={handleSelectProject}
         />
 
         <main className="flex-1 p-8 md:ml-64">
